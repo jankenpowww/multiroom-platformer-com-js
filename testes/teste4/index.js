@@ -4,7 +4,7 @@ let ctx = canvas.getContext("2d")
 canvas.width = 64 * 14
 canvas.height = 64 * 9
 
-let player = new Player(30, 30, 30, 30, "yellow")
+let player = new Player(30, 30, 30, 30, "limegreen")
 
 function animation() {
     window.requestAnimationFrame(animation)
@@ -17,3 +17,11 @@ function animation() {
 }
 
 animation()
+
+document.addEventListener("keydown", (e) => {
+    switch (e.key) {
+        case "w":
+            player.velocity.velY -= 10
+        break;
+    }
+})
