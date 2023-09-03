@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../stemp-css/stemp.css" type="text/css">
+    <title>a01</title>
+</head>
+<body>
+    <h1>Multi-room Platformer com JS</h1>
+
+    <main>
+        <h1>Jogos com JavaScript</h1>
+        <p>Vamos desenvolver um jogo com JavaScript de plataforma e explorar como programar as principais mecânicas utilizando a linguagem e o que abrange o desenvolvimento de jogos com HTML5. Entre as mecânicas que compõe um jogo de plataforma, vamos aprender a: construir um "game engine", que vai rodar o jogo e seus componentes; mecânicas básicas de colisão, movimentação de personagem; construção de mapas e um sistema de fases divididos na criação de múltiplas salas, onde o jogador pode explorar.</p>
+
+        <p>Todos os conceitos e mecânicas à serem explorados:</p>
+
+        <ul>
+            <li>Definir o <em>setup</em> do projeto;
+            <li>Criar o jogador;</li>
+            <li>Movimentação do jogador;</li>
+            <li><em>Sprites</em> de cenário e fundo;</li>
+            <li>Blocos de colisão;</li>
+            <li>Detecção de colisão;</li>
+            <li>Animação de <em>sprites</em>;</li>
+            <li>Implementação de <em>hitbox</em>;</li>
+            <li>Troca dinâmica de <em>sprites</em> (animações);</li>
+            <li>Sistema de navegação entre salas + definindo avanços de níveis;</li>
+            <li>Próximos passos...</li>
+        </ul>
+
+        <br><br>
+
+        <h1>Setup do Projeto</h1>
+        <p>Antes de mais nada, é preciso criar a <b>a pasta do projeto onde os arquivos que compõe os elementos do jogo serão criados</b>. 'projeto-jogo' será o nome do diretório deste tutorial.</p>
+
+        <p>Por se tratar de jogos feitos com JavaScript e HTML, vamos criar um 'index.html' contendo um &lt;canvas&gt; nele. A tag &lt;canvas&gt; é uma tag do HTML que <b>permite a criação e renderização de gráficos e elementos manipulados com JavaScript</b>. Sua finalidade aqui é <b>renderizar todos os elementos gráficos do nosso jogo à ser criado</b>.</p>
+
+        <p>Note que <b>a estrutura não precisa estar necessariamente dentro da estrutura padrão do HTML, à princípio</b>, já que a ideia é que a tela do jogo, ou seja, o que delimita o tamanho e largura do canvas ocupe 100% do espaço. Mas você pode incluir metatags de &lt;head&gt; normalmente, ou a estrutura padrão se for o caso.</p>
+
+        <p>O que importa aqui é a tag &lt;canvas&gt;, de qualquer forma. E, abaixo dela, <b>criaremos uma tag &lt;script&gt;</b>, onde vamos começar a fazer nossos primeiros testes e protótipos. Observe as primeiras linhas de código...</p>
+
+<pre><span class="nomeArquivo">index.html</span>
+<code>
+<span class="tLaranja">&lt;canvas&gt;</span><span class="tLaranja">&lt;/canvas&gt;</span>
+
+<span class="tLaranja">&lt;script&gt;</span>
+    let <span class="tBranco">canvas</span> = document.querySelector(<span class="tLaranja">"canvas"</span>)
+    let <span class="tBranco">ctx</span> = <span class="tBranco">canvas</span>.<span class="tRosa">getContext</span>(<span class="tLaranja">"2d"</span>)
+<span class="tLaranja">&lt;/script&gt;</span>
+</code>
+</pre>
+
+        <p>Na primeira linha, estamos associando o elemento &lt;canvas&gt; que acabamos de criar a uma variável de mesmo nome, nada de muito novo. E com esta variável, atribuímos a <span class="tCodigo"><span class="tBranco">ctx</span></span> o <span class="tCodigo"><span class="tRosa">getContext</span>(<span class="tLaranja">"2d"</span>)</span>, que <b>define que o contexto dos elementos à serem renderizados dentro do &lt;canvas&gt; são elementos bidimensionais, de duas dimensões</b>. A variável <span class="tCodigo"><span class="tBranco">ctx</span></span>, que foi inicializada com o contexto do &lt;canvas&gt;, pode ser utilizado para renderizar esses elementos 2d finalmente.</p>
+
+        <p>Adicione uma borda de cor preta no canvas utilizando CSS primeiro antes de partirmos para criar um elemento dentro do canvas. Tudo o que temos até agora, abrindo o arquivo no browser, é uma tela em branco, embora o elemento do canvas exista. <b>É possível fazer isso no arquivo abrindo uma tag &lt;style&gt; e selecionando o canvas como seletor, bem como aplicar qualquer estilo normalmente independentemente.</b></p>
+
+        <p>Feito isso, continuamos no código. Na tag &lt;script&gt;, vamos criar, ou melhor, renderizar <b>nosso primeiro elemento na tela.</b></p>
+
+<pre><span class="nomeArquivo">index.html</span>
+<code>
+...
+
+<span class="tLaranja">&lt;script&gt;</span>
+    let <span class="tBranco">canvas</span> = document.querySelector(<span class="tLaranja">"canvas"</span>)
+    let <span class="tBranco">ctx</span> = <span class="tBranco">canvas</span>.<span class="tRosa">getContext</span>(<span class="tLaranja">"2d"</span>)
+
+    <span class="tBranco">ctx</span>.fillStyle = <span class="tLaranja">"deeppink"</span>
+    <span class="tBranco">ctx</span>.<span class="tRosa">fillRect</span>(<span class="tLaranja">50</span>, <span class="tLaranja">50</span>, <span class="tLaranja">100</span>, <span class="tLaranja">50</span>)
+<span class="tLaranja">&lt;/script&gt;</span>
+</code>
+</pre>
+
+        <p><span class="tCodigo">fillStyle</span> é uma propriedade de <span class="tCodigo"><span class="tBranco">ctx</span></span> <b>que pode receber uma string referente à cor de preenchimento de um elemento à ser renderizado</b>. Veja que até essa linha nada foi renderizado na tela de fato, mas vai à partir da última linha.</p>
+
+        <p><span class="tCodigo"><span class="tBranco">ctx</span>.<span class="tRosa">fillRect</span>(<span class="tLaranja">posX</span>, <span class="tLaranja">posY</span>, <span class="tLaranja">largura</span>, <span class="tLaranja">altura</span>)</span> é o método que cria definitivamente um elemento na tela. Note os quatro parâmetros passados: <span class="tCodigo"><span class="tLaranja">posX</span></span> e <span class="tCodigo"><span class="tLaranja">posY</span></span> se referem <b>respectivamente a posição X e Y do elemento dentro do canvas</b>, considerando o tamanho e largura do canvas em si. <span class="tCodigo"><span class="tLaranja">largura</span></span> e <span class="tCodigo"><span class="tLaranja">altura</span></span> é, obviamente, referente ao tamanho e largura do quadrado ou retângulo em si.</p>
+
+        <p>Abrindo o 'index.html' no navegador novamente, <b>veremos um retângulo rosa no canto esquerdo dentro do &lt;canvas&gt;, que está destacado pela sua borda</b>.</p>
+
+        <p>E por falar em largura e altura, o próprio canvas <b>também tem sua propriedade de largura e altura</b>, armazenados na variável em que criamos para selecioná-la e definir o contexto de renderização em seguida. Observe:</p>
+
+<pre><span class="nomeArquivo">index.html</span>
+<code>
+...
+
+<span class="tLaranja">&lt;script&gt;</span>
+    let <span class="tBranco">canvas</span> = document.querySelector(<span class="tLaranja">"canvas"</span>)
+    let <span class="tBranco">ctx</span> = <span class="tBranco">canvas</span>.<span class="tRosa">getContext</span>(<span class="tLaranja">"2d"</span>)
+
+    <span class="tBranco">canvas</span>.width = <span class="tLaranja">64</span> * <span class="tLaranja">16</span> <span class="tVerde">//1024</span>
+    <span class="tBranco">canvas</span>.height = <span class="tLaranja">64</span> * <span class="tLaranja">9</span> <span class="tVerde">//576</span>
+
+    ...
+</code>
+</pre>
+
+        <p><span class="tCodigo"><span class="tBranco">canvas</span>.width</span> e <span class="tCodigo"><span class="tBranco">canvas</span>.height</span> são as propriedades respectivas que definem <b>largura e altura do &lt;canvas&gt; na tela</b>. Mas porque exatamente esses valores foram passados? Por questão de <b>proporção de tela</b>. A proporção de tela da maioria dos dispositivos hoje seguem a proporção 16:9, o que também podemos chamar de <em>aspect ratio</em>. O tamanho e proporção da tela para o nosso proposito <b>tem relação direta com os futuros elementos renderizados na tela</b>, especialmente ao que diz respeito aos <em>tiles</em> que serão preenchidos na tela, e um tamanho de proporção incorreto pode interferir no funcionamento dessas coisas. Por conta disso, 64 é o valor referente ao tamanho e largura dos <em>tiles</em> que vão compor os gráficos de plataforma do nosso jogo, multiplicando pelos valores de <em>aspect ratio</em> e definindo o tamanho e altura do canvas finalmente.</p>
+
+        <p>Com isso em mente, vamos avançar para o próximo passo...</p>
+
+        <br><br>
+
+        <h1>Criando o jogador + organizando</h1>
+        <p>Agora que já aprendemos a renderizar retângulos e quadrados dentro do canvas, vamos animar as coisas. E no melhor sentido da palavra: o quadradozinho azul estático não parece algo muito interessante, e antes de animar as coisas que renderizamos em tela, precisamos entender como o &lt;canvas&gt; funciona.</p>
+
+        <p>O &lt;canvas&gt; por si só funciona exatamente <b>como um quadro em branco</b>. <b></b>Podemos criar vários quadrados e retângulos como fizemos anteriormente</b>, em várias posições e tamanhos e larguras e de cores diferentes, e eles estarão lá. Acontece que, quando pensamos em animação, ou "tornar coisas animáveis", a gente precisa garantir que, <b>a medida em que os frames de uma animação passa</b>, as coisas na tela se movimentem e se tranformem.</p>
+
+        <p>E nesse estado atual do nosso canvas, isso ainda não é possível. Até chegarmos na parte em que movimentamos o personagem do nosso jogo, podemos pensar que tornar o &lt;canvas&gt; apto para renderizar frame a frame, retratando os elementos gráficos do jogo, é algo totalmente necessário. Com essa introdução, vamos iniciar e começar a entender '<b>como um <em>loop</em> de animação funciona</b>', já que é através dele que vamos garantir que o canvas entre nesse estado de mudança constante e garantir que as coisas movimentadas em tela realmente se movimente.</p>
+
+        <p>Como já separamos <b>todo o script para um arquivo separado</b>, é hora de fazer o mesmo <b>para a classe do player, que é o objeto da tela que o jogador vai poder controlar</b>. E antes mesmo de chegar na parte em que programamos a movimentação, precisamos saber como tudo isso funciona na prática.</p>
+
+        <p>Na pasta do projeto, vamos criar um diretório chamado 'classes', <b>que é onde o arquivo responsável pro guardar todo o código da nossa classe estará</b>. Criando o arquivo, podemos começar as primeiras linhas <b>declarando a classe 'Player'</b>.</p>
+
+<pre>
+<span class="nomeArquivo">Player.js</span>
+<code>
+class <span class="tBranco">Player</span> {
+    constructor() {
+
+    }
+}
+</code>
+</pre>
+
+    <p>Nossa classe <span class="tCodigo"><span class="tBranco">Player</span></span> declarada possui um <span class="tCodigo">constructor</span>, <b>que é um método especial reservado justamente para o momento de instanciar um objeto oriundo de uma classe e suas características</b>. No construtor da classe, <b>vamos passar propriedades importantes que descrevem características de qualquer objeto instanciado com base no que foi descrito aqui</b>. Para criar nosso jogador, <b>precisamos abstrair tudo o que foi feito até agora e o que temos para considerar nosso Player, um Player de verdade</b>.</p>
+
+    <p>Nosso jogador nada mais é do que elementos desenhados na tela, <b>então pressupõe-se que nosso jogador, nessa primeira parte, será apenas um quadrado colorido desenhado na tela por enquanto</b>. Daqui vamos ver como podemos fazer com que esse elemento se mova na tela e entender a importância de adaptar esse elemento e os outros que virão dentro de classes.</p>
+
+    <p>Para criar um quadrado, até esse momento, tivemos que informar <b>uma série de características</b>: posição dentro do canvas, largura e altura e cor. <b>Entendendo como objetos se comportam e são definidos, sabemos que essas características, no escopo de classe, podem ser as propriedades de um objeto</b>. Veja que da forma com que fizemos, não teríamos controle e orgnização nenhuma sobre os elementos renderizados e isso se tornaria um problema mais cedo ou mais tarde. Portanto, vamos definir esses elementos no nosso construtor!</p>
+
+<pre>
+<span class="nomeArquivo">Player.js</span>
+<code>
+class <span class="tBranco">Player</span> {
+    constructor(<span class="tBranco">posicaoX</span>, <span class="tBranco">posicaoY</span>, <span class="tBranco">larguraPlayer</span>, <span class="tBranco">alturaPlayer</span>, <span class="tBranco">corPlayer</span>) {
+        <span class="tRosa">this</span>.<span class="tBranco">posicao</span> = {
+            <span class="tBranco">posX</span>: <span class="tBranco">posicaoX</span>,
+            <span class="tBranco">posY</span>: <span class="tBranco">posicaoY</span>
+        }
+
+        <span class="tRosa">this</span>.<span class="tBranco">largura</span> = <span class="tBranco">larguraPlayer</span>
+        <span class="tRosa">this</span>.<span class="tBranco">altura</span> = <span class="tBranco">alturaPlayer</span>
+
+        <span class="tRosa">this</span>.<span class="tBranco">cor</span> = <span class="tBranco">corPlayer</span>
+    }
+}
+</code>
+</pre>
+
+        <p>Uma vez que temos o arquivo da nossa classe Player, <b>vamos também criar um arquivo 'index.js' apenas para o código referente ao próprio &lt;canvas&gt;, da qual estávamos fazendo os primeiros testes</b>. Neste arquivo, vamos deixar apenas a variável de contexto e a especificação de tamanho e largura do canvas.</p>
+
+<pre>
+<span class="nomeArquivo">index.js</span>
+<code>
+let <span class="tBranco">canvas</span> = document.querySelector(<span class="tLaranja">"canvas"</span>)
+let <span class="tBranco">ctx</span> = <span class="tBranco">canvas</span>.<span class="tRosa">getContext</span>(<span class="tLaranja">"2d"</span>)
+
+<span class="tBranco">canvas</span>.width = <span class="tLaranja">64</span> * <span class="tLaranja">16</span> <span class="tVerde">//1024</span>
+<span class="tBranco">canvas</span>.height = <span class="tLaranja">64</span> * <span class="tLaranja">9</span> <span class="tVerde">//576</span>
+</code>
+</pre>
+
+        <p>Agora que exportamos todo o código que tinhamos no 'index.html' para um arquivo externo, basta chamá-lo externamente. Faremos isso também com o arquivo-fonte da nossa classe Player:</p>
+
+<pre>
+<span class="arquivo">index.html</span>
+<code>
+<span class="tLaranja">&lt;canvas&gt;</span><span class="tLaranja">&lt;/canvas&gt;</span>
+<span class="tLaranja">&lt;script <span class="tBranco">src="classes/Player.js"</span>&gt;</span><span class="tLaranja">&lt;/script&gt;</span>
+<span class="tLaranja">&lt;script <span class="tBranco">src="index.js"</span>&gt;</span><span class="tLaranja">&lt;/script&gt;</span>
+</code>
+</pre>
+
+        <br><br>
+
+        <h1>Animando as coisas</h1>
+        <p>Vamos ao arquivo 'index.js', onde vamos trabalhar com os objetos dentro do canvas, e onde vamos fazer nossa primeira animação.</p>
+
+        <p>Vamos isolar o trecho da nossa animação em uma função chamada <span class="tCodigo"><span class="tRosa">animarQuadrado</span>()</span>. É importante que todas as instruções estejam em uma função por conta de uma funcionalidade do próprio JavaScript que vamos chamar dentro dela. Veja:</p>
+
+<pre>
+<span class="nomeArquivo">index.js</span>
+<code>
+let <span class="tBranco">canvas</span> = document.querySelector(<span class="tLaranja">"canvas"</span>)
+let <span class="tBranco">ctx</span> = <span class="tBranco">canvas</span>.<span class="tRosa">getContext</span>(<span class="tLaranja">"2d"</span>)
+
+<span class="tBranco">canvas</span>.width = <span class="tLaranja">64</span> * <span class="tLaranja">16</span> <span class="tVerde">//1024</span>
+<span class="tBranco">canvas</span>.height = <span class="tLaranja">64</span> * <span class="tLaranja">9</span> <span class="tVerde">//576</span>
+
+function <span class="tRosa">animarQuadrado</span>() {
+    <span class="tBranco">window</span>.<span class="tRosa">requestAnimationFrame</span>(<span class="tRosa">animarQuadrado</span>)
+}
+</code>
+</pre>
+
+        <p><span class="tCodigo"><span class="tRosa">requestAnimationFrame</span>()</span> é um método/função do JavaScript <b>que lida justamente com animações de elementos na tela</b>, sejam elementos HTML comuns, seja elementos dentro do &lt;canvas&gt;. Ele faz uma <b>request</b>, ou <b>solicitação</b> para o navegador atualizar um bloco de código passado como função callback dentro do seu parâmetro, e o navegador provê uma <b>sequência de loop infinito para a função callback dita</b>, que vai executando até que, dentro da sua lógica, algo faça parar de executar.</p>
+
+        <p>Em resumo, nossa função, quando chamada, vai rodar todo o seu código em loop. Se, dentro dessa função, colocarmos um <span class="tCodigo">console.log(<span class="tLaranja">"Olá, mundo!"</span>)</span> e chamar a função logo abaixo, <b>ao abrir o console no DevTools, vamos ver que "Olá, mundo!" será executada constantemente</b>, como se estivesse em um loop. Esse conceito de loop e a principal estrutura que vamos utilizar para animar um quadrado se movimentando na tela é a base para a nossa primeira animação.</p>
+
+        <p>A ideia principal aqui, por enquanto, é que a animação <b>consista em um quadrado laranja caindo para baixo</b>. Vamos criar essa situação na prática primeiro sem depender de instanciar um objeto da nossa classe por enquanto, apenas por questão de teste.</p>
+
+<pre>
+<span class="nomeArquivo">index.js</span>
+<code>
+let <span class="tBranco">canvas</span> = document.querySelector(<span class="tLaranja">"canvas"</span>)
+let <span class="tBranco">ctx</span> = <span class="tBranco">canvas</span>.<span class="tRosa">getContext</span>(<span class="tLaranja">"2d"</span>)
+
+<span class="tBranco">canvas</span>.width = <span class="tLaranja">64</span> * <span class="tLaranja">16</span> <span class="tVerde">//1024</span>
+<span class="tBranco">canvas</span>.height = <span class="tLaranja">64</span> * <span class="tLaranja">9</span> <span class="tVerde">//576</span>
+
+function <span class="tRosa">animarQuadrado</span>() {
+    <span class="tBranco">window</span>.<span class="tRosa">requestAnimationFrame</span>(<span class="tRosa">animarQuadrado</span>)
+
+    <span class="tBranco">ctx</span>.<span class="tBranco">fillStyle</span> = <span class="tLaranja">"orangered"</span>
+    <span class="tBranco">ctx</span>.<span class="tRosa">fillRect</span>(<span class="tLaranja">30</span>, <span class="tLaranja">30</span>, <span class="tLaranja">70</span>, <span class="tLaranja">70</span>)
+}
+
+<span class="tRosa">animarQuadrado</span>()
+</code>
+</pre>
+
+    <p>Pensar em animar coisas com JavaScript no &lt;canvas&gt; é pensar sobre <b>como esse processo funciona logicamente</b>. Veja que no trecho de código acima, qual chamamos <span class="tCodigo"><span class="tBranco">ctx</span></span> para criar o quadrado, está imediatamente dentro da função que entra em loop (e que é a função que chamamos logo abaixo para ser executada). Verificando os resultados ao executar o código, <b>veremos que o quadrado será renderizado na tela, normalmente</b>, como foi feito anteriormente. E só. Mas lembre-se que, como agora estamos fazendo esse processo dentro de uma função em loop, <b>é correto dizer que o mesmo quadrado está renderizando nas mesmas especificações passadas em <span class="tCodigo"><span class="tBranco">fillstyle</span></span> e <span class="tCodigo"><span class="tRosa">fillrect</span></span></b>, infinitamente. E pensando em atualizações de quadros e frames, como dito antes e é o que está acontecendo aqui, <b>é como se o quadrado estivesse sendo sobreposto na mesma posição à cada repetição do loop</b>, mas visualmente falando, parece que nada está acontecendo de verdade, e o quadrado está lá, na mesma posição, estático.</p>
+
+    <p>Com isso em mente, podemos finalmente <b>criar a animação</b>, <b>prestando atenção nas condições - ou características, como vimos ao criar a classe - do nosso quadrado</b>. Sabemos que as posições do quadrado quando vamos renderizá-lo no &lt;canvas&gt;, devem ser passadas em argumentos de uma função específica <b>definindo X e Y, respecitivamente: a posição horizontal e vertical do elemento renderizado</b>. Quanto mais próximo de 0 ambos esses valores estão, mas à esquerda, em relação à posição X o quadrado vai ser renderizado, e mais pra cima em relação à posição Y. Renderizar um quadrado verde de 30 por 30 na posição 0 para X e Y, seguindo essa lógica, vai mostrar pra gente <b>um quadrado no extremo canto superior esquerdo da área que abrange o nosso canvas</b>.</p>
+
+    <p>Por tanto, para animar um quadrado caindo, precisamos <b>fazer com que o valor de posição desse quadrado altere de forma que ele se desloque para baixo à cada alteração desse valor</b>. Esse valor de posição é justamente o valor de posição vertical, ou Y, do quadrado renderizado em relação ao &lt;canvas&gt;, tendo em mente que <b>quanto mais o valor de posição vertical está próximo de zero, mais próximo da borda superior do próprio canvas o quadrado vai estar</b>.</p>
+
+    <p>Declaremos uma variável <span class="tCodigo"><span class="tBranco">posY</span></span> valendo 30, fora do escopo da função. E então informar esse valor nas especificações do quadrado renderizado em <span class="tCodigo"><span class="tRosa">fillrect</span>()</span>, especificamente no parâmetro de Y.</p>
+
+<pre>
+<span class="nomeArquivo">index.js</span>
+<code>
+...
+
+let <span class="tBranco">posY</span> = <span class="tLaranja">30</span>
+
+function <span class="tRosa">animarQuadrado</span>() {
+    <span class="tBranco">window</span>.<span class="tRosa">requestAnimationFrame</span>(<span class="tRosa">animarQuadrado</span>)
+
+    <span class="tBranco">ctx</span>.<span class="tBranco">fillStyle</span> = <span class="tLaranja">"orangered"</span>
+    <span class="tBranco">ctx</span>.<span class="tRosa">fillRect</span>(<span class="tLaranja">30</span>, <span class="tBranco">posY</span>, <span class="tLaranja">70</span>, <span class="tLaranja">70</span>)
+}
+
+<span class="tRosa">animarQuadrado</span>()
+</code>
+</pre>
+
+    <p>Visualizando os resultados, veremos que nada mudou. E isso é esperado, já que está acontecendo a mesma coisa de antes: um quadrado laranja sendo renderizado na mesma posição à cada repetição do loop. A diferença é que, o valor de 30 para o parâmetro Y da função <span class="tCodigo"><span class="tRosa">fillrect</span></span> agora está dentro de uma variável, o que vai permitir manipular esse valor, e finalmente <b>animar o quadrado</b>.</p>
+
+    <p>Sabendo que quanto mais próximo Y está de 0, mais próximo do tipo do canvas ele está. Neste caso, para deslocar o quadrado para baixo, <b>precisamos incrementar esse valor</b>, e quanto mais longe o valor da posição Y de um quadrado renderizado está de 0, mais próximo da borda inferior ele vai estar, <b>criando a animação de "cair" efetivamente</b>.</p>
+
+    <p>Então, basta que a variável posY incremente um valor para que o quadrado se desloque para baixo. E esse incremento vai acontecer toda vez à cada repetição do loop.</p>
+
+<pre>
+<span class="nomeArquivo">index.js</span>
+<code>
+...
+
+let <span class="tBranco">posY</span> = <span class="tLaranja">30</span>
+
+function <span class="tRosa">animarQuadrado</span>() {
+    <span class="tBranco">window</span>.<span class="tRosa">requestAnimationFrame</span>(<span class="tRosa">animarQuadrado</span>)
+
+    <span class="tBranco">ctx</span>.<span class="tBranco">fillStyle</span> = <span class="tLaranja">"orangered"</span>
+    <span class="tBranco">ctx</span>.<span class="tRosa">fillRect</span>(<span class="tLaranja">30</span>, <span class="tBranco">posY</span>, <span class="tLaranja">70</span>, <span class="tLaranja">70</span>)
+
+    <span class="tBranco">posY</span>++
+}
+
+<span class="tRosa">animarQuadrado</span>()
+</code>
+</pre>
+
+    <p>E visualizando os resultados, <b>finalmente uma animação vai acontecer</b>, como esperávamos. Mas não exatamente nas condições que queríamos. Nessa função de animação que criamos, um quadrado laranja vai ser criado, inicialmente, na posição X e Y correpondendo o valor de 30. O valor de Y, como colocamos, está numa variável, que incrementa mais 1. À partir daqui, o loop encerra e começa novamente, <b>e veja que o quadrado vai ser renderizado novamente nas mesmas especificações do loop anterior</b>, com a diferença que o valor informado pela variável <span class="tCodigo"><span class="tBranco">posY</span></span> estará valendo 31 dessa vez, até ser incrementado de novo, e isso se repetir infinitamente. E de fato: o quadrado vai ser renderizado de novo e de novo, cada vez mais próximo da borda inferior; caindo lentamente até a borda, atravessando-a. E visualmente falando, <b>o quadrado não parece estar caindo</b>, mas <b>expandindo de tamanho</b> ou como <b>se estivesse pintando o canvas de vermelho</b>, pra baixo.</p>
+
+    <p>E não é o que queremos. E para resolver isso, <b>basta com que tenhamos um jeito de atualizar todo o quadro que abrnage o canvas à cada loop</b>, simulando uma atualização para o próximo quadro. A solução pra isso é <b>preencher ou apagar o &lt;canvas&gt; para a próxima atualização, considerando o bloco de código à ser executado dentro da função.</b></p>
+
+    <p>Vamos fazer com que <b>o canvas seja preenchido de preto, no início do bloco de código da nossa função de animação</b>. O quadrado laranja vai ser criado em um "frame", incrementar o valor de Y e retornar ao início da função para o o próximo frame. Nesse próximo frame, o canvas vai ser preenchido totalmente de preto, sobrepondo o quadrado do frame anterior, e então criar o próximo quadrado que estará mais abaixo devido ao seu valor de Y estar sendo incrementado. E assim continuadamente...</p>
+
+<pre>
+<span class="arquivo">index.js</span>
+<code>
+...
+
+let <span class="tBranco">posY</span> = <span class="tLaranja">30</span>
+
+function <span class="tRosa">animarQuadrado</span>() {
+    <span class="tBranco">window</span>.<span class="tRosa">requestAnimationFrame</span>(<span class="tRosa">animarQuadrado</span>)
+
+    <span class="tVerde">//Preenchendo todo o canvas de preto à cada repetição.</span>
+    <span class="tBranco">ctx</span>.<span class="tBranco">fillStyle</span> = <span class="tLaranja">"black"</span>
+    <span class="tBranco">ctx</span>.<span class="tRosa">fillRect</span>(<span class="tLaranja">0</span>, <span class="tLaranja">0</span>, <span class="tBranco">canvas</span>.<span class="tBranco">width</span>, <span class="tBranco">canvas</span>.<span class="tBranco">height</span>)
+
+    <span class="tBranco">ctx</span>.<span class="tBranco">fillStyle</span> = <span class="tLaranja">"orangered"</span>
+    <span class="tBranco">ctx</span>.<span class="tRosa">fillRect</span>(<span class="tLaranja">30</span>, <span class="tBranco">posY</span>, <span class="tLaranja">70</span>, <span class="tLaranja">70</span>)
+
+    <span class="tBranco">posY</span>++
+}
+
+</code>
+</pre>
+        <p>E então, temos um quadrado laranja se movendo pra baixo corretamente.</p>
+    </main>
+</body>
+</html>
