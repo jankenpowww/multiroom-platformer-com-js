@@ -21,7 +21,7 @@ animation()
 document.addEventListener("keydown", (e) => {
     switch (e.key) {
         case "w":
-            player.velocity.velY -= 10
+            player.velocity.velY -= 20
         break;
     }
 })

@@ -5,9 +5,6 @@ class Player {
             posY: posY
         }
 
-        //Velocidade. Objeto com parâmetros para a velocidade em ambas as direções (X e Y)
-        //A velocidade é incrementada de forma exponencial, de forma com que a velocidade do
-        //jogador, enquanto estiver caindo, vai aumentando de forma contínua.
         this.velocity = {
             velX: 0,
             velY: 0
@@ -31,20 +28,17 @@ class Player {
     }
 
     update() {
-        this.position.posY += this.velocity.velY //Incrementa o valor da posição Y do objeto
-                                                 //com o valor de velocidade atual.
-        this.sides.bottom = this.position.posY + this.height //Atualiza o valor do bottom do objeto.
+        this.position.posX += this.velocity.velX
+
+        this.position.posY += this.velocity.velY
+        this.sides.bottom = this.position.posY + this.height
 
         if (canvas.height > this.sides.bottom + this.velocity.velY) {
-            this.velocity.velY += this.gravity //Incrementa o valor da velocidade com o valor de gravidade. A cada repetição
-                                    //a queda do objeto vai ficando mais rápida.
-
+            this.velocity.velY += this.gravity
 
             this.sides.bottom = this.position.posY + this.height
         } else {
-            this.velocity.velY = 0 //Se o canvas.height é igual ao bottom do objeto + velocidade,
-                                   //o objeto atingiu a borda inferior do canvas. A velocidade 
-                                   //de queda recebe 0 e o objeto para de cair.
+            this.velocity.velY = 0
         }
     }
 }
